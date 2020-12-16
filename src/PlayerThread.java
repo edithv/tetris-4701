@@ -26,14 +26,15 @@ public class PlayerThread extends Thread {
     int landingHeight = Utility.arrayMax(oldState.top, slot, slot + pieceWidth) + pieceHeight / 2;
 
     int rowsEliminated = newState.getRowsCleared() - oldState.getRowsCleared() + rowsCleared;
-    int rowTransitions = newState.getRowTransitions();
-    int colTransitions = newState.getColTransitions();
+    int bumpiness = newState.getBumpiness();
+    // int rowTransitions = newState.getRowTransitions();
+    // int colTransitions = newState.getColTransitions();
     int numHoles = newState.getNumHoles();
     int wellSum = newState.getWellSum();
 
     double utility = weights[Constant.LANDING_HEIGHT] * landingHeight
-        + weights[Constant.ROW_ELIMINATED] * rowsEliminated + weights[Constant.ROW_TRANSITIONS] * rowTransitions
-        + weights[Constant.COL_TRANSITIONS] * colTransitions + weights[Constant.NUM_HOLES] * numHoles
+        + weights[Constant.ROW_ELIMINATED] * rowsEliminated 
+        + weights[Constant.NUM_HOLES] * numHoles +weights[Constant.BUMPINESS] * bumpiness
         + weights[Constant.WELL_SUM] * wellSum;
 
     return utility;

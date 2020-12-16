@@ -193,17 +193,17 @@ class Person implements Comparable<Person> {
   /**
    * Uniform cross-over
    */
-  public static Person crossOver(Person self, Person other) {
-    double[] weights = Arrays.copyOf(self.weights, self.weights.length);
-    for (int i = 0; i < weights.length; i++) {
-      if (Utility.flipCoin()) {
-        weights[i] = other.weights[i];
-      }
-    }
-    Person child = new Person(weights);
-    child.updateFitness();
-    return child;
-  }
+   public static Person crossOver(Person self, Person other) {
+     double[] weights = Arrays.copyOf(self.weights, self.weights.length);
+     for (int i = 0; i < weights.length; i++) {
+       if (Utility.flipCoin()) {
+         weights[i] = other.weights[i];
+       }
+     }
+     Person child = new Person(weights);
+     child.updateFitness();
+     return child;
+   }
 
   /**
    * Mutate a given person with delta in range [-2, 2]

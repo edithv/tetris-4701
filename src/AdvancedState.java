@@ -31,37 +31,37 @@ public class AdvancedState extends State {
     return numHoles * 10;
   }
 
-  public int getRowTransitions() {
-    int rowTransitions = 0;
-    int lastCell = 1;
-    cleanField();
-    for (int i = 0; i < ROWS; i++) {
-      for (int j = 0; j < COLS; j++) {
-        if ((field[i][j] == 0) != (lastCell == 0)) {
-          rowTransitions++;
-        }
-        lastCell = field[i][j];
-      }
-      if (lastCell == 0)
-        rowTransitions++;
-    }
-    return rowTransitions;
-  }
+  // public int getRowTransitions() {
+  //   int rowTransitions = 0;
+  //   int lastCell = 1;
+  //   cleanField();
+  //   for (int i = 0; i < ROWS; i++) {
+  //     for (int j = 0; j < COLS; j++) {
+  //       if ((field[i][j] == 0) != (lastCell == 0)) {
+  //         rowTransitions++;
+  //       }
+  //       lastCell = field[i][j];
+  //     }
+  //     if (lastCell == 0)
+  //       rowTransitions++;
+  //   }
+  //   return rowTransitions;
+  // }
 
-  public int getColTransitions() {
-    int colTransitions = 0;
-    cleanField();
-    for (int j = 0; j < COLS; j++) {
-      for (int i = top[j] - 2; i >= 0; i--) {
-        if ((field[i][j] == 0) != (field[i + 1][j] == 0)) {
-          colTransitions++;
-        }
-      }
-      if (field[0][j] == 0 && top[j] > 0)
-        colTransitions++;
-    }
-    return colTransitions;
-  }
+  // public int getColTransitions() {
+  //   int colTransitions = 0;
+  //   cleanField();
+  //   for (int j = 0; j < COLS; j++) {
+  //     for (int i = top[j] - 2; i >= 0; i--) {
+  //       if ((field[i][j] == 0) != (field[i + 1][j] == 0)) {
+  //         colTransitions++;
+  //       }
+  //     }
+  //     if (field[0][j] == 0 && top[j] > 0)
+  //       colTransitions++;
+  //   }
+  //   return colTransitions;
+  // }
 
   public int getBumpiness() {
     int bumpiness = 0;
