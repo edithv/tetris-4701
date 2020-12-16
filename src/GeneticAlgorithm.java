@@ -45,7 +45,7 @@ public class GeneticAlgorithm {
 
     for (int iteration = 0; iteration < Constant.NUMB_ITERATIONS; iteration++) {
       System.out.println("#------------------- Starting Iteration # + " + iteration + "-----------------------#");
-      // expandPopulationByCrossOver();
+      expandPopulationByCrossOver();
       expandPopulationByMutation();
       refinePopulation();
 
@@ -106,23 +106,21 @@ public class GeneticAlgorithm {
     }
   }
 
-  // private static void expandPopulationByCrossOver() {
-  // Vector subjects = new Vector<Person>();
-  // for (int i = 0; i < Constant.PERCENTAGE_CROSS_OVER * Constant.POPULATION_SIZE
-  // / 100; i++) {
-  // int subject1 = Utility.randomInt(population.size());
-  // int subject2 = Utility.randomInt(population.size());
-  // if (subject1 != subject2) {
-  // subjects.add(Person.crossOver(population.get(subject1),
-  // population.get(subject2)));
-  // }
-  // }
-  // subjects.forEach(subject -> population.add((Person) subject));
+  private static void expandPopulationByCrossOver() {
+    Vector subjects = new Vector<Person>();
+    for (int i = 0; i < Constant.PERCENTAGE_CROSS_OVER * Constant.POPULATION_SIZE / 100; i++) {
+      int subject1 = Utility.randomInt(population.size());
+      int subject2 = Utility.randomInt(population.size());
+      if (subject1 != subject2) {
+        subjects.add(Person.crossOver(population.get(subject1), population.get(subject2)));
+      }
+    }
+    subjects.forEach(subject -> population.add((Person) subject));
 
-  // // Wait until all persons finish updating fitness
-  // ThreadController threadMaster = ThreadController.getInstance();
-  // threadMaster.waitFinishUpdate();
-  // }
+    // Wait until all persons finish updating fitness
+    ThreadController threadMaster = ThreadController.getInstance();
+    threadMaster.waitFinishUpdate();
+  }
 
   private static void expandPopulationByMutation() {
     Vector subjects = new Vector<Integer>();
@@ -186,17 +184,17 @@ class Person implements Comparable<Person> {
   /**
    * Uniform cross-over
    */
-  // public static Person crossOver(Person self, Person other) {
-  // double[] weights = Arrays.copyOf(self.weights, self.weights.length);
-  // for (int i = 0; i < weights.length; i++) {
-  // if (Utility.flipCoin()) {
-  // weights[i] = other.weights[i];
-  // }
-  // }
-  // Person child = new Person(weights);
-  // child.updateFitness();
-  // return child;
-  // }
+  public static Person crossOver(Person self, Person other) {
+    double[] weights = Arrays.copyOf(self.weights, self.weights.length);
+    for (int i = 0; i < weights.length; i++) {
+      if (Utility.flipCoin()) {
+        weights[i] = other.weights[i];
+      }
+    }
+    Person child = new Person(weights);
+    child.updateFitness();
+    return child;
+  }
 
   /**
    * Mutate a given person with delta in range [-2, 2]
