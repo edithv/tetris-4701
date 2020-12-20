@@ -122,40 +122,67 @@ public class PlayerThread extends Thread {
     Utility.IntDoublePair bestUtility = new Utility.IntDoublePair(-Integer.MAX_VALUE, -Double.MAX_VALUE);
     int bestMove = 0;
 
+    System.out.println("rows: " + state.getRowsCleared());
+    System.out.println("Start picking moves");
     for (int move = 0; move < legalMoves.length; move++) {
       AdvancedState cs = state.clone();
       cs.makeMove(move);
       if (cs.hasLost()) {
         continue;
-      } else {
-        int[][] legal = cs.legalMoves();
-        for (int moves = 0; moves < legal.length; moves++) {
-          AdvancedState css = cs.clone();
-          css.makeMove(moves);
-          if (css.hasLost()) {
-            continue;
-          } else {
-            Utility.IntDoublePair utility;
-            if (cs.getHighestColumn() > 15) {
-              utility = computeUtilityWithTwoLookAhead(state, cs, css);
-            } else if (cs.getHighestColumn() > 10) {
-              // utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
-              utility = computeUtilityWithLookAhead(cs, css);
-            } else {
-              utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
-            }
-            if (utility.biggerThan(bestUtility)) {
-              bestUtility = utility;
-              bestMove = move;
-            }
-          }
-        }
       }
 
+      Utility.IntDoublePair utility = (state.getHighestColumn() > 10 ? computeUtilityWithLookAhead(state, cs)
+          : new Utility.IntDoublePair(0, computeUtility(state, cs, move, 0)));
+      if (utility.biggerThan(bestUtility)) {
+        bestUtility = utility;
+        bestMove = move;
+      }
     }
-
+    System.out.println("Found best move: " + bestMove + ">" + legalMoves[bestMove][0] + " - " + legalMoves[bestMove][1]
+        + bestUtility.second);
     return bestMove;
   }
+
+  // implement this function to have a working system
+  // private int pickMove(AdvancedState state, int[][] legalMoves) {
+  // Utility.IntDoublePair bestUtility = new
+  // Utility.IntDoublePair(-Integer.MAX_VALUE, -Double.MAX_VALUE);
+  // int bestMove = 0;
+
+  // for (int move = 0; move < legalMoves.length; move++) {
+  // AdvancedState cs = state.clone();
+  // cs.makeMove(move);
+  // if (cs.hasLost()) {
+  // continue;
+  // } else {
+  // int[][] legal = cs.legalMoves();
+  // for (int moves = 0; moves < legal.length; moves++) {
+  // AdvancedState css = cs.clone();
+  // css.makeMove(moves);
+  // if (css.hasLost()) {
+  // continue;
+  // } else {
+  // Utility.IntDoublePair utility;
+  // if (cs.getHighestColumn() > 15) {
+  // utility = computeUtilityWithTwoLookAhead(state, cs, css);
+  // } else if (cs.getHighestColumn() > 10) {
+  // // utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
+  // utility = computeUtilityWithLookAhead(cs, css);
+  // } else {
+  // utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
+  // }
+  // if (utility.biggerThan(bestUtility)) {
+  // bestUtility = utility;
+  // bestMove = move;
+  // }
+  // }
+  // }
+  // }
+
+  // }
+
+  // return bestMove;
+  // }
 
   /*
    * public static void main(String[] args) { State s = new State(); new
