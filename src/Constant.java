@@ -13,8 +13,6 @@ public class Constant {
   public static final int ROW_ELIMINATED = 1;
   public static final int NUM_HOLES = 2;
   public static final int BUMPINESS = 3;
-  // public static final int ROW_TRANSITIONS = 3;
-  // public static final int COL_TRANSITIONS = 4;
   public static final int WELL_SUM = 4;
 
   // Indicates positive or negative features

@@ -33,9 +33,8 @@ public class PlayerThread extends Thread {
     int wellSum = newState.getWellSum();
 
     double utility = weights[Constant.LANDING_HEIGHT] * landingHeight
-        + weights[Constant.ROW_ELIMINATED] * rowsEliminated 
-        + weights[Constant.NUM_HOLES] * numHoles +weights[Constant.BUMPINESS] * bumpiness
-        + weights[Constant.WELL_SUM] * wellSum;
+        + weights[Constant.ROW_ELIMINATED] * rowsEliminated + weights[Constant.NUM_HOLES] * numHoles
+        + weights[Constant.BUMPINESS] * bumpiness + weights[Constant.WELL_SUM] * wellSum;
 
     return utility;
   }
@@ -76,6 +75,48 @@ public class PlayerThread extends Thread {
     return totalUtility;
   }
 
+  private Utility.IntDoublePair computeUtilityWithTwoLookAhead(AdvancedState oldState, AdvancedState newState,
+      AdvancedState nextState) {
+    int rowsCleared = newState.getRowsCleared() - oldState.getRowsCleared();
+    Utility.IntDoublePair totalUtility = new Utility.IntDoublePair(0, 0);
+
+    // look-two-ahead try all possible moves
+    for (int i = 0; i < AdvancedState.N_PIECES; i++) {
+      newState.setNextPiece(i);
+      // Find best move if the next piece is i
+      double tempBestUtility = -Double.MAX_VALUE;
+      int tempBestMove = -1;
+      for (int move = 0; move < newState.legalMoves().length; move++) {
+        AdvancedState lookAheadState = newState.clone();
+        lookAheadState.makeMove(move);
+        if (lookAheadState.hasLost()) {
+          continue;
+        } else {
+          for (int moves = 0; moves < nextState.legalMoves().length; moves++) {
+            AdvancedState twoAheadState = lookAheadState.clone();
+            twoAheadState.makeMove(moves);
+            if (twoAheadState.hasLost()) {
+              continue;
+            }
+            double utility = computeUtility(lookAheadState, twoAheadState, moves, rowsCleared);
+            if (utility > tempBestUtility) {
+              tempBestUtility = utility;
+              tempBestMove = moves;
+            }
+          }
+        }
+
+      }
+      if (tempBestMove == -1) {
+        totalUtility.first--;
+      } else {
+        totalUtility.second += tempBestUtility;
+      }
+
+    }
+    return totalUtility;
+  }
+
   // implement this function to have a working system
   private int pickMove(AdvancedState state, int[][] legalMoves) {
     Utility.IntDoublePair bestUtility = new Utility.IntDoublePair(-Integer.MAX_VALUE, -Double.MAX_VALUE);
@@ -86,15 +127,33 @@ public class PlayerThread extends Thread {
       cs.makeMove(move);
       if (cs.hasLost()) {
         continue;
+      } else {
+        int[][] legal = cs.legalMoves();
+        for (int moves = 0; moves < legal.length; moves++) {
+          AdvancedState css = cs.clone();
+          css.makeMove(moves);
+          if (css.hasLost()) {
+            continue;
+          } else {
+            Utility.IntDoublePair utility;
+            if (cs.getHighestColumn() > 15) {
+              utility = computeUtilityWithTwoLookAhead(state, cs, css);
+            } else if (cs.getHighestColumn() > 10) {
+              // utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
+              utility = computeUtilityWithLookAhead(cs, css);
+            } else {
+              utility = new Utility.IntDoublePair(0, computeUtility(cs, css, moves, 0));
+            }
+            if (utility.biggerThan(bestUtility)) {
+              bestUtility = utility;
+              bestMove = move;
+            }
+          }
+        }
       }
 
-      Utility.IntDoublePair utility = (state.getHighestColumn() > 10 ? computeUtilityWithLookAhead(state, cs)
-          : new Utility.IntDoublePair(0, computeUtility(state, cs, move, 0)));
-      if (utility.biggerThan(bestUtility)) {
-        bestUtility = utility;
-        bestMove = move;
-      }
     }
+
     return bestMove;
   }
 
