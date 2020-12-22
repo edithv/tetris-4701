@@ -1,3 +1,6 @@
+//This program is forked from the Github repository:
+//    Wcabynessa/Tetris-AI
+// This original program was heavily adjusted to meet our needs.
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -65,21 +68,19 @@ public class GeneticAlgorithm {
 
   }
 
-  /** Generate POPULATION_SIZE persons. */
   private static void InitializePopulation() {
     population = new ArrayList<Person>();
 
-    // Adding elTetris
     double[][] weightsSet = {
-        { -4.500158825082766, 3.4181268101392694, -3.2178882868487753, -8.623980366398425, -3.3855972247263626 },
-        { -6.327963734639091, 1.0157382356213152, -4.592208044263306, -7.579480544672485, -6.793547344753633 },
-        { -5.4406549693496835, 1.9400759197493433, -4.061509929466729, -7.17509446059371, -6.853156643203179 },
-        { -5.37940603295278, 0.07102716633358042, -2.805173095479242, -5.00388628172954, -4.066370242557882 },
-        { -9.278674493224145, 9.832837125985247, -7.0662690787529, -6.259834817762627, -9.341267476130502 },
-        { -5.37940603295278, 0.07102716633358042, -2.805173095479242, -4.622680979141526, -4.066370242557882 },
-        { -6.722683476678911, 3.93719917810158, -5.053304009912225, -2.504459684787976, -8.702962904595529 },
-        { -7.920550460008268, 7.247935059854502, -4.980881668207032, -4.94219359067836, -7.947687995019514 },
-        { -6.722683476678911, 5.404565296917712, -5.053304009912225, -2.504459684787976, -8.702962904595529 }
+        { -4.856393412802155, 3.5035969996231951, -5.696079737154641, -2.880295692564255, -4.856393412802155 },
+        { -6.353544509908005, 2.8153473729915044, -8.628591938844059, -7.6261583212092905, -6.353544509908005 },
+        { -5.447335891581961, 8.875201136503023, -4.209984658848587, -3.4249029633214434, -5.447335891581961 },
+        { -1.6079163204088776, 0.07830273595682002, -3.9763720595731487, -3.392489979806549, -1.6079163204088776 },
+        { -9.100653144629398, 4.402909393226468, -5.708796370057478, -9.34658732150928, -9.100653144629398 },
+        { -5.576697856421292, 1.977271233134471, -9.72612929387645, -6.471947186286485, -5.576697856421292 },
+        { -2.839548921847872, 9.175617948954585, -3.6898333138035087, -4.1842417277399635, -2.839548921847872 },
+        { -6.212299436204987, 4.694847016310222, -3.711280319354274, -3.082390144105074, -6.212299436204987 },
+        { -2.29228711620576, 9.79450773957667, -7.417125307425103, -8.144555230558607, -2.29228711620576 }
 
     };
     for (double[] weights : weightsSet) {
@@ -88,17 +89,14 @@ public class GeneticAlgorithm {
       population.add(elTetris);
     }
 
-    // Adding random
     for (int i = 0; i < Constant.POPULATION_SIZE; i++) {
       population.add(new Person());
     }
 
-    // Wait until all persons finish updating fitness
     ThreadController threadMaster = ThreadController.getInstance();
     threadMaster.waitFinishUpdate();
   }
 
-  /** Only keep POPULATION_SIZE persons with highest fitness */
   private static void refinePopulation() {
     Collections.sort(population);
     while (population.size() > Constant.POPULATION_SIZE) {
@@ -109,15 +107,14 @@ public class GeneticAlgorithm {
   private static void expandPopulationByCrossOver() {
     Vector subjects = new Vector<Person>();
     for (int i = 0; i < Constant.PERCENTAGE_CROSS_OVER * Constant.POPULATION_SIZE / 100; i++) {
-      int subject1 = Utility.randomInt(population.size());
-      int subject2 = Utility.randomInt(population.size());
+      int subject1 = Fitness.randomInt(population.size());
+      int subject2 = Fitness.randomInt(population.size());
       if (subject1 != subject2) {
         subjects.add(Person.crossOver(population.get(subject1), population.get(subject2)));
       }
     }
     subjects.forEach(subject -> population.add((Person) subject));
 
-    // Wait until all persons finish updating fitness
     ThreadController threadMaster = ThreadController.getInstance();
     threadMaster.waitFinishUpdate();
   }
@@ -125,30 +122,24 @@ public class GeneticAlgorithm {
   private static void expandPopulationByMutation() {
     Vector subjects = new Vector<Integer>();
     while (subjects.size() < Constant.PERCENTAGE_MUTATION * Constant.POPULATION_SIZE / 100) {
-      int subject = Utility.randomInt(Constant.POPULATION_SIZE);
+      int subject = Fitness.randomInt(Constant.POPULATION_SIZE);
       if (!subjects.contains(subject)) {
         subjects.add(subject);
       }
     }
 
     for (int i = 0; i < subjects.size(); i++) {
-      int subject = Utility.randomInt(subjects.size());
-      int featureIndex = Utility.randomInt(Constant.NUMB_FEATURES);
+      int subject = Fitness.randomInt(subjects.size());
+      int featureIndex = Fitness.randomInt(Constant.NUMB_FEATURES);
 
       population.add(Person.mutate(population.get(subject), featureIndex));
     }
 
-    // Wait until all persons finish updating fitness
     ThreadController threadMaster = ThreadController.getInstance();
     threadMaster.waitFinishUpdate();
   }
 }
 
-/**
- * Represents a person in population.
- *
- * Remember to manually udpate fitness value before use.
- */
 class Person implements Comparable<Person> {
   public double[] weights;
   private AtomicInteger fitness = new AtomicInteger(0);
@@ -165,7 +156,7 @@ class Person implements Comparable<Person> {
   private void randomWeightVector() {
     weights = new double[Constant.NUMB_FEATURES];
     for (int i = 0; i < Constant.NUMB_FEATURES; i++) {
-      weights[i] = Math.abs(Utility.randomReal() * 10) * Constant.FEATURE_TYPE[i];
+      weights[i] = Math.abs(Fitness.randomReal() * 10) * Constant.FEATURE_TYPE[i];
     }
   }
 
@@ -181,11 +172,10 @@ class Person implements Comparable<Person> {
     }
   }
 
-  // Uniform Crossover
   public static Person crossOver(Person self, Person other) {
     double[] weights = Arrays.copyOf(self.weights, self.weights.length);
     for (int i = 0; i < weights.length; i++) {
-      if (Utility.flipCoin()) {
+      if (Fitness.flipCoin()) {
         weights[i] = other.weights[i];
       }
     }
@@ -194,10 +184,9 @@ class Person implements Comparable<Person> {
     return child;
   }
 
-  // Mutate
   public static Person mutate(Person self, int mutateLocation) {
     double[] weights = Arrays.copyOf(self.weights, self.weights.length);
-    weights[mutateLocation] += Utility.randomReal() * 2;
+    weights[mutateLocation] += Fitness.randomReal() * 2;
     Person child = new Person(weights);
     child.updateFitness();
     return child;

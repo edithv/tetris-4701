@@ -67,22 +67,6 @@ public class AdvancedState extends State {
     return wellSum;
   }
 
-  public void printTop() {
-    for (int j = 0; j < COLS; j++) {
-      System.out.print(top[j] + " - ");
-    }
-    System.out.println();
-  }
-
-  public void printField() {
-    for (int j = 0; j < COLS; j++) {
-      for (int i = 0; i < top[j]; i++) {
-        System.out.print(field[i][j] + " - ");
-      }
-      System.out.println();
-    }
-  }
-
   public void cleanField() {
     for (int j = 0; j < COLS; j++) {
       for (int i = top[j]; i < ROWS; i++) {
