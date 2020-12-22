@@ -1,7 +1,3 @@
-//This program is forked from the Github repository:
-//    Wcabynessa/Tetris-AI
-// This original program was heavily adjusted to meet our needs.
-
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.*;
