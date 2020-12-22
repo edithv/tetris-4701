@@ -3,4 +3,4 @@
 # Tetris Learning Strategies
 
 This program was forked from an online repository: Wcabynessa/Tetris-AI.
-We used this program as our foundation to implement a look 2 ahead approach to the genetic algorithm and adjusted the program to meet our needs for computing the fitness score and testing. 
+Using this repository as our basic foundation, we heavily adjusted the code to fit our needs. We overall adjusted the code to match what we were looking for. We also changed the features to the five features we wanted to focus on and added functions such as Look Two Steps Ahead and Testing.
