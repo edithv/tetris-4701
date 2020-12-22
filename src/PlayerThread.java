@@ -17,7 +17,6 @@ public class PlayerThread extends Thread {
   }
 
   private double computeUtility(AdvancedState oldState, AdvancedState newState, int move, int rowsCleared) {
-    // Landing height is the height of the column where the piece is put
     int piece = oldState.getNextPiece();
     int orient = oldState.legalMoves()[move][AdvancedState.ORIENT];
     int slot = oldState.legalMoves()[move][AdvancedState.SLOT];
@@ -27,8 +26,6 @@ public class PlayerThread extends Thread {
 
     int rowsEliminated = newState.getRowsCleared() - oldState.getRowsCleared() + rowsCleared;
     int bumpiness = newState.getBumpiness();
-    // int rowTransitions = newState.getRowTransitions();
-    // int colTransitions = newState.getColTransitions();
     int numHoles = newState.getNumHoles();
     int wellSum = newState.getWellSum();
 
@@ -122,8 +119,8 @@ public class PlayerThread extends Thread {
     Utility.IntDoublePair bestUtility = new Utility.IntDoublePair(-Integer.MAX_VALUE, -Double.MAX_VALUE);
     int bestMove = 0;
 
-    System.out.println("rows: " + state.getRowsCleared());
-    System.out.println("Start picking moves");
+    // System.out.println("rows: " + state.getRowsCleared());
+    // System.out.println("Start picking moves");
     for (int move = 0; move < legalMoves.length; move++) {
       AdvancedState cs = state.clone();
       cs.makeMove(move);
@@ -138,8 +135,9 @@ public class PlayerThread extends Thread {
         bestMove = move;
       }
     }
-    System.out.println("Found best move: " + bestMove + ">" + legalMoves[bestMove][0] + " - " + legalMoves[bestMove][1]
-        + bestUtility.second);
+    // System.out.println("Found best move: " + bestMove + ">" +
+    // legalMoves[bestMove][0] + " - " + legalMoves[bestMove][1]
+    // + bestUtility.second);
     return bestMove;
   }
 

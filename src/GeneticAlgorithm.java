@@ -10,7 +10,7 @@ public class GeneticAlgorithm {
   public static ArrayList<Person> population;
 
   public static void main(String[] args) {
-    System.out.println("#------------------- Starting Genetic Algorithm --------------------#");
+    System.out.println("Beginning GA");
     State.initializeLegalMoves();
     for (double i : GeneticSearch()) {
       System.out.println(i);
@@ -181,9 +181,7 @@ class Person implements Comparable<Person> {
     }
   }
 
-  /**
-   * Uniform cross-over
-   */
+  // Uniform Crossover
   public static Person crossOver(Person self, Person other) {
     double[] weights = Arrays.copyOf(self.weights, self.weights.length);
     for (int i = 0; i < weights.length; i++) {
@@ -196,9 +194,7 @@ class Person implements Comparable<Person> {
     return child;
   }
 
-  /**
-   * Mutate a given person with delta in range [-2, 2]
-   */
+  // Mutate
   public static Person mutate(Person self, int mutateLocation) {
     double[] weights = Arrays.copyOf(self.weights, self.weights.length);
     weights[mutateLocation] += Utility.randomReal() * 2;
